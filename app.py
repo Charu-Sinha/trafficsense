@@ -13,6 +13,9 @@ import os
 import subprocess
 import tempfile
 
+# Fix: set YOLO config dir to writable location on Streamlit Cloud
+os.environ["YOLO_CONFIG_DIR"] = "/tmp/Ultralytics"
+
 import cv2
 import pandas as pd
 import plotly.express as px
@@ -77,7 +80,7 @@ with st.sidebar:
     line_pos = st.slider("Counting line position (% of width)", 0.1, 0.9, 0.5, 0.05)
     max_frames = st.slider("Frames to process (demo limit)", 50, 600, 200, 50,
                             help="Lower = faster preview on CPU. Use process_video.py for full videos.")
-    run_btn = st.button("▶️  Run detection", type="primary", use_container_width=True)
+    run_btn = st.button("▶️  Run detection", type="primary", width='stretch')
 
     st.markdown("---")
     st.markdown("**Density thresholds**")
@@ -134,7 +137,7 @@ if run_btn:
             if frame_idx % 5 == 0:
                 frame_placeholder.image(
                     cv2.cvtColor(annotated, cv2.COLOR_BGR2RGB),
-                    channels="RGB", use_container_width=True,
+                    channels="RGB", width='stretch',
                 )
 
             log_rows.append({
@@ -272,7 +275,7 @@ if df is not None and len(df) > 0:
             st.video(st.session_state.output_video)
             with open(st.session_state.output_video, "rb") as f:
                 st.download_button("⬇️ Download annotated video", f,
-                                    file_name="traffic_output.mp4", use_container_width=True)
+                                    file_name="traffic_output.mp4", width='stretch')
 
     # ---- raw data tab
     with tab2:
@@ -280,7 +283,7 @@ if df is not None and len(df) > 0:
         csv_bytes = df.to_csv(index=False).encode("utf-8")
         st.download_button("⬇️ Download CSV log", csv_bytes,
                             file_name="results.csv", mime="text/csv",
-                            use_container_width=True)
+                            width='stretch')
 
 else:
     st.info("👆 Upload a traffic video in the sidebar and click **Run detection** to get started.")
