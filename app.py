@@ -10,6 +10,7 @@ An interactive Streamlit app that:
 """
 
 import os
+import subprocess
 import tempfile
 
 import cv2
@@ -99,6 +100,8 @@ if run_btn:
         tfile = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
         tfile.write(video_file.read())
         input_path = tfile.name
+
+        raw_output_path = os.path.join(tempfile.gettempdir(), "traffic_raw.avi")
         output_path = os.path.join(tempfile.gettempdir(), "traffic_output.mp4")
 
         with st.spinner("Loading YOLOv8 model..."):
@@ -110,12 +113,10 @@ if run_btn:
         fps = cap.get(cv2.CAP_PROP_FPS) or 25
         line_x = int(width * line_pos)
 
-        fourcc = cv2.VideoWriter_fourcc(*"avc1")
-        out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
-        if not out.isOpened():
-            # avc1/H.264 encoder not available on this system - fall back
-            fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-            out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
+        # write with a codec OpenCV always supports, then re-encode with
+        # ffmpeg to H.264 so it plays in the browser <video> element
+        fourcc = cv2.VideoWriter_fourcc(*"XVID")
+        out = cv2.VideoWriter(raw_output_path, fourcc, fps, (width, height))
 
         frame_placeholder = st.empty()
         progress_bar = st.progress(0, text="Processing video...")
@@ -159,6 +160,21 @@ if run_btn:
             pass
         progress_bar.empty()
         frame_placeholder.empty()
+
+        # re-encode to H.264 mp4 so it plays in the browser
+        with st.spinner("Finalizing video..."):
+            ffmpeg_ok = (
+                subprocess.run(
+                    ["ffmpeg", "-y", "-i", raw_output_path,
+                     "-c:v", "libx264", "-pix_fmt", "yuv420p",
+                     "-movflags", "+faststart", output_path],
+                    capture_output=True,
+                ).returncode == 0
+            )
+            if not ffmpeg_ok:
+                # ffmpeg not available - fall back to the raw (downloadable
+                # but maybe not browser-playable) file
+                output_path = raw_output_path
 
         st.session_state.results_df = pd.DataFrame(log_rows)
         st.session_state.output_video = output_path
