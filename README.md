@@ -115,8 +115,7 @@ This produces `traffic_output.mp4` (annotated video) and `results.csv`
 (per-second log of counts and density).
 
 ---
-🔗 **Live demo:** [trafficsense-hfarc3qxcvq6rurjfhqy5s.streamlit.app](https://trafficsense-hfarc3qxcvq6rurjfhqy5s.streamlit.app)
-
+🔗 **Live demo:** https://trafficsense-bqmjyu8n9x7kx6uq7rffmb.streamlit.app/
 ## Real-world impact
 
 If deployed on Bengaluru's signalized intersections, this approach could
