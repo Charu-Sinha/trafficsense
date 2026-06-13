@@ -1,0 +1,21 @@
+{
+  "settings_version": "0.0.6",
+  "datasets_dir": "C:\\Users\\Charu\\Downloads\\datasets",
+  "weights_dir": "C:\\Users\\Charu\\Downloads\\trafficsense\\weights",
+  "runs_dir": "C:\\Users\\Charu\\Downloads\\trafficsense\\runs",
+  "uuid": "f4aef07fdf4b15d11f6e91525a56eda8ddb4ceb6a0d58e566a45a213c2261b06",
+  "sync": true,
+  "api_key": "",
+  "openai_api_key": "",
+  "clearml": true,
+  "comet": true,
+  "dvc": true,
+  "hub": true,
+  "mlflow": true,
+  "neptune": true,
+  "raytune": true,
+  "tensorboard": false,
+  "wandb": false,
+  "vscode_msg": true,
+  "openvino_msg": true
+}
